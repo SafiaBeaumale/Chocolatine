@@ -23,14 +23,19 @@ jobs:
       - name: "Check project coding style !"
         run:
           run: |
-            check.sh $(pwd) $(pwd)
-            if [[ -s coding-style-reports.log && $(grep -c 'Error' coding-style-reports.log) -gt 0 ]]; then
-              exit 1;
-            else
-              exit 0;
-            fi;
-  
-            echo "::set-output name=number_of_errors::$(grep -c 'Error' coding-style-reports.log)"
+run: |
+  if [[ -s coding-style-reports.log && $(grep -c 'Error' coding-style-reports.log) -gt 0 ]]; then
+    check.sh $(pwd) $(pwd)
+  fi;
+
+  if [[ -s coding-style-reports.log && $(grep -c 'Error' coding-style-reports.log) -gt 0 ]]; then
+    exit 1;
+  else
+    exit 0;
+  fi;
+
+  echo "::set-output name=number_of_errors::$(grep -c 'Error' coding-style-reports.log)"
+
 
 
   compilation:

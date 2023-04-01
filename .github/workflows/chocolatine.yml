@@ -23,15 +23,14 @@ jobs:
       - name: "Check project coding style !"
         run:
           run: |
-            check.sh $(pwd) $(pwd) # Exécute le script "check.sh" avec l'emplacement actuel du projet comme argument.
-
-            if [[ -s coding-style-reports.log && $(grep -c 'Error' coding-style-reports.log) -gt 0 ]]; then # Vérifie si le fichier de rapport de style de code n'est pas vide et contient au moins une erreur.
-              exit 1; # Si le fichier n'est pas vide et contient une erreur, le script échoue avec un code de sortie de 1.
+            check.sh $(pwd) $(pwd)
+            if [[ -s coding-style-reports.log && $(grep -c 'Error' coding-style-reports.log) -gt 0 ]]; then
+              exit 1;
             else
-              exit 0; # Sinon, le script réussit avec un code de sortie de 0.
+              exit 0;
             fi;
   
-            echo "::set-output name=number_of_errors::$(grep -c 'Error' coding-style-reports.log)" # Définit la variable de sortie "number_of_errors" avec le nombre d'erreurs trouvées dans le fichier de rapport de style de code à l'aide de la commande "grep".
+            echo "::set-output name=number_of_errors::$(grep -c 'Error' coding-style-reports.log)"
 
 
   compilation:

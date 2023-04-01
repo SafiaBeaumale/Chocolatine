@@ -15,8 +15,11 @@ env:
 
 jobs:
   coding_style:
+    name: "Regarder si le repo contient des erreurs de normes"
     runs-on: ubuntu-latest
-    container: ghcr.io/epitech/coding-style-checker:latest
+    container: 
+      image: ghcr.io/epitech/coding-style-checker:latest
+    
     steps:
       - uses: actions/checkout@v3
       - id: coding_style

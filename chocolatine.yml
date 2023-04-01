@@ -27,6 +27,7 @@ jobs:
             exit 1;
           fi;
           exit 0;
+          # echo "::set-output name=number_of_errors::$(grep -c 'Error' coding_style_reports.log)"
 
   check_compilation:
     name: "Checks compilation of binaries given !"

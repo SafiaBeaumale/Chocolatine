@@ -14,7 +14,7 @@ env:
   ARGUMENTS: ""
 
 jobs:
-  check_coding_style:
+  coding_style:
     runs-on: ubuntu-latest
     container: ghcr.io/epitech/coding-style-checker:latest
     steps:
@@ -25,17 +25,18 @@ jobs:
           check.sh $(pwd) $(pwd);
           if [[ -s coding-style-reports.log ]]; then
             exit 1;
+          else
+            exit 0;
           fi;
-          exit 0;
-          # echo "::set-output name=number_of_errors::$(grep -c 'Error' coding_style_reports.log)"
+          echo "::set-output name=number_of_errors::$(grep -c 'Error' coding_style_reports.log)"
 
-  check_compilation:
+  compilation:
     name: "Checks compilation of binaries given !"
     runs-on: ubuntu-latest
     container:
       image: epitechcontent/epitest-docker:latest
     needs: 
-      - check_coding_style
+      - coding_style
 
     steps:
       - uses: actions/checkout@v3
@@ -57,7 +58,7 @@ jobs:
     container:
       image: epitechcontent/epitest-docker:latest
     needs: 
-      - check_compilation
+      - compilation
 
     steps:
       - uses: actions/checkout@v3

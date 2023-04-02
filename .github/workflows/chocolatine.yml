@@ -14,23 +14,23 @@ env:
   ARGUMENTS: ""
 
 jobs:
-  check_repo:
-    name: "Checks if the repository is clean and void of any unwanted files (temp files, binary files, etc.)"
+  repo_is_good:
+    name: "Vérifier que le dossier contient uniquement les fichiers nécessaires à la compilation !"
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/epitech/coding-style-checker:latest
 
     steps:
       - uses: actions/checkout@v3
-      - id: check_repo
+      - id: repo_is_good
         run: |
           check.sh $(pwd) $(pwd);
           if [[ -s coding-style-reports.log ]]; then
             echo "::error file=coding-style-reports.log::Coding style check failed. Please fix the errors in the report file."
           fi;
-  check_program_compilation:
-    needs: [check_repo]
-    name: "Checks compilation of binaries given"
+  compilation_program:
+    needs: [repo_is_good]
+    name: "Vérifier que la compilation se déroule correctement !"
     runs-on: ubuntu-latest
     container:
       image: epitechcontent/epitest-docker:latest
@@ -54,16 +54,16 @@ jobs:
               ./$x || echo "::error file=$x::Binary failed to execute. Please check the code."
             done
           IFS=$OIFS
-  run_tests:
-    needs: [check_program_compilation]
-    name: "Runs tests with criterion"
+  criterion_tests:
+    needs: [compilation_program]
+    name: "Lancer les tests criterions pour le programme !"
     runs-on: ubuntu-latest
     container:
       image: epitechcontent/epitest-docker:latest
 
     steps:
       - uses: actions/checkout@v3
-      - id: run_tests
+      - id: criterion_tests
         run: make tests_run
         timeout-minutes: 2
         continue-on-error: true
@@ -75,9 +75,9 @@ jobs:
           if [[ -s criterion_output.log ]]; then
             echo "::error file=criterion_output.log::Unit tests failed. Please check the report file."
           fi;
-  push_to_mirror:
-    needs: [run_tests]
-    name: "Push to mirror"
+  repo_mirror:
+    needs: [criterion_tests]
+    name: "Envoyer le dossier mirroir !"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

@@ -19,7 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/epitech/coding-style-checker:latest
-
     steps:
       - uses: actions/checkout@v3
       - id: repo_is_good
@@ -28,13 +27,13 @@ jobs:
           if [[ -s coding-style-reports.log ]]; then
             echo "::error file=coding-style-reports.log::Coding style check failed. Please fix the errors in the report file."
           fi;
+
   compilation_program:
     needs: [repo_is_good]
     name: "Vérifier que la compilation se déroule correctement !"
     runs-on: ubuntu-latest
     container:
       image: epitechcontent/epitest-docker:latest
-
     steps:
       - uses: actions/checkout@v3
       - run: make
@@ -43,9 +42,7 @@ jobs:
         shell: bash
         env:
           EXECUTABLES: ${{ env.EXECUTABLES }}
-
       - run: make clean
-
       - run: |
           OIFS=$IFS
           IFS=','
@@ -54,13 +51,13 @@ jobs:
               ./$x || echo "::error file=$x::Binary failed to execute. Please check the code."
             done
           IFS=$OIFS
+
   criterion_tests:
     needs: [compilation_program]
     name: "Lancer les tests criterions pour le programme !"
     runs-on: ubuntu-latest
     container:
       image: epitechcontent/epitest-docker:latest
-
     steps:
       - uses: actions/checkout@v3
       - id: criterion_tests
@@ -70,11 +67,11 @@ jobs:
         shell: bash
         env:
           EXECUTABLES: ${{ env.EXECUTABLES }}
-
       - run: |
           if [[ -s criterion_output.log ]]; then
             echo "::error file=criterion_output.log::Unit tests failed. Please check the report file."
           fi;
+
   repo_mirror:
     needs: [criterion_tests]
     name: "Envoyer le dossier mirroir !"
@@ -83,7 +80,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
       - uses: pixta-dev/repository-mirroring-action@v1
         with:
           target_repo_url:

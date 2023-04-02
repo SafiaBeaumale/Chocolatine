@@ -83,6 +83,6 @@ jobs:
       - uses: pixta-dev/repository-mirroring-action@v1
         with:
           target_repo_url:
-            ${{ env.MIRROR_URL }}
+            <SafiaBeaumale>/<git@github.com:EpitechPromo2027/B-DOP-200-LYN-2-1-chocolatine-safia.beaumale-mesmar>
           ssh_private_key:
-            ${{ secrets.GIT_SSH_KEY }}
+            ${{ secrets.GITLAB_SSH_PRIVATE_KEY }}

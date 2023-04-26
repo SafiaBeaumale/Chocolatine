@@ -1,0 +1,89 @@
+name: chocolatine
+
+on:
+  push:
+    branches-ignore:
+      - 'ga-ignore-*'
+  pull_request:
+    branches-ignore:
+      - 'ga-ignore-*'
+
+env:
+  MIRROR_URL: "git@github.com:EpitechPromo2027/B-DOP-200-LYN-2-1-chocolatine-safia.beaumale-mesmar"
+  EXECUTABLES: "binary"
+  ARGUMENTS: ""
+
+jobs:
+  repo_is_good:
+    name: "Vérifier que le dossier contient uniquement les fichiers nécessaires à la compilation !"
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/epitech/coding-style-checker:latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - id: repo_is_good
+        run: |
+          check.sh $(pwd) $(pwd);
+          if [[ -s coding-style-reports.log ]]; then
+            echo "::error file=coding-style-reports.log::Coding style check failed. Please fix the errors in the report file."
+          fi;
+
+  compilation_program:
+    needs: [repo_is_good]
+    name: "Vérifier que la compilation se déroule correctement !"
+    runs-on: ubuntu-latest
+    container:
+      image: epitechcontent/epitest-docker:latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: make
+        timeout-minutes: 2
+        continue-on-error: true
+        shell: bash
+        env:
+          EXECUTABLES: ${{ env.EXECUTABLES }}
+      - run: make clean
+      - run: |
+          OIFS=$IFS
+          IFS=','
+          for x in $EXECUTABLES
+            do
+              ./$x || echo "::error file=$x::Binary failed to execute. Please check the code."
+            done
+          IFS=$OIFS
+
+  criterion_tests:
+    needs: [compilation_program]
+    name: "Lancer les tests criterions pour le programme !"
+    runs-on: ubuntu-latest
+    container:
+      image: epitechcontent/epitest-docker:latest
+    steps:
+      - uses: actions/checkout@v3
+      - id: criterion_tests
+        run: make tests_run
+        timeout-minutes: 2
+        continue-on-error: true
+        shell: bash
+        env:
+          EXECUTABLES: ${{ env.EXECUTABLES }}
+      - run: |
+          if [[ -s criterion_output.log ]]; then
+            echo "::error file=criterion_output.log::Unit tests failed. Please check the report file."
+          fi;
+
+  repo_mirror:
+    needs: [criterion_tests]
+    name: "Envoyer le dossier mirroir !"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url:
+            ${{ env.MIRROR_URL }}
+          ssh_private_key:
+            ${{ secrets.GIT_SSH_KEY }}

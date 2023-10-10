@@ -2,7 +2,7 @@
 
 <img src="https://github.com/SafiaBeaumale/chocolatine/blob/main/image_readme/chocolatine.png" height=60 align="left">
 <br></br>
-<p>Chocolatine est un proet qui permet de configurerez un flux de travail GitHub Actions pour appliquer les bonnes pratiques et  règles dans un
+<p>Chocolatine est un projet qui permet de configurer un flux de travail GitHub Actions pour appliquer les bonnes pratiques et  règles dans un
 dépôt.</p>
 <br></br>
 <div align="center">
